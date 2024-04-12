@@ -90,8 +90,7 @@ class AuthApplicationService:
             user_agent=str(self._current_user.user_agent)
         )
         user_model = schemas.User.model_validate(user)
-        role_model = schemas.RoleMedium(id=user.role.id, title=user.role.title, permissions=permission_title_list)
-        return schemas.User(**user_model.model_dump(exclude={"role"}), role=role_model), tokens, session_id
+        return user_model, tokens, session_id
 
     @permission_filter(Permission.LOGOUT)
     async def logout(self, session_id: str | None) -> None:
@@ -143,9 +142,8 @@ class AuthApplicationService:
         )
         await self.redis_client_reauth.delete(session_id)
         user_model = schemas.User.model_validate(user)
-        role_model = schemas.RoleMedium(id=user.role.id, title=user.role.title, permissions=permission_title_list)
         return (
-            schemas.User(**user_model.model_dump(exclude={"role"}), role=role_model),
+            user_model,
             new_tokens,
             new_session_id
         )

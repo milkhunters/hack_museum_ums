@@ -22,7 +22,7 @@ class User(Base):
     role_id = Column(Integer, ForeignKey("roles.id"), nullable=False)
     role = relationship("Role", back_populates="users")
 
-    state = Column(Enum(UserState), default=UserState.NOT_CONFIRMED)
+    state = Column(Enum(UserState), default=UserState.ACTIVE)
     hashed_password = Column(VARCHAR(255))
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())

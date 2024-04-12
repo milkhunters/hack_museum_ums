@@ -17,11 +17,6 @@ class BaseUser(ABC, authentication.BaseUser):
 
     @property
     @abstractmethod
-    def username(self) -> str:
-        pass
-
-    @property
-    @abstractmethod
     def permissions(self) -> set[str]:
         pass
 
@@ -69,9 +64,8 @@ class BaseUser(ABC, authentication.BaseUser):
 
 
 class AuthenticatedUser(BaseUser):
-    def __init__(self, id: str, username: str, permissions: list[Permission], state: str, exp: int, **kwargs):
+    def __init__(self, id: str, permissions: list[Permission], state: str, exp: int, **kwargs):
         self._id = uuid.UUID(id)
-        self._username = username
         self._permissions = permissions
         self._state = state
         self._exp = exp
@@ -86,20 +80,12 @@ class AuthenticatedUser(BaseUser):
         return True
 
     @property
-    def display_name(self) -> str:
-        return self.username
-
-    @property
     def identity(self) -> uuid.UUID:
         return self._id
 
     @property
     def id(self) -> uuid.UUID:
         return self._id
-
-    @property
-    def username(self) -> str:
-        return self.username
 
     @property
     def permissions(self) -> set[Permission]:
@@ -140,7 +126,7 @@ class AuthenticatedUser(BaseUser):
         return hash(self._id)
 
     def __repr__(self):
-        return f"<{self.__class__.__name__}(id={self._id}, username={self._username})>"
+        return f"<{self.__class__.__name__}(id={self._id})>"
 
 
 class UnauthenticatedUser(BaseUser):
@@ -166,10 +152,6 @@ class UnauthenticatedUser(BaseUser):
 
     @property
     def id(self) -> None:
-        return None
-
-    @property
-    def username(self) -> None:
         return None
 
     @property

@@ -1,5 +1,3 @@
-import logging
-
 from fastapi.requests import Request
 from starlette.authentication import AuthCredentials
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -9,8 +7,6 @@ from user_agents import parse
 from ums.models.auth import AuthenticatedUser, UnauthenticatedUser
 from ums.security.jwt import JwtTokenProcessor
 from ums.security.models import JWTTokens
-from ums.repositories import UserRepo
-
 from ums.services import SessionManager
 from ums.utils import RedisClient
 

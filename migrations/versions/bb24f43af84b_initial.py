@@ -67,4 +67,5 @@ def downgrade() -> None:
     op.drop_table('role_permission')
     op.drop_table('roles')
     op.drop_table('permissions')
+    op.execute('DROP TYPE userstate')
     # ### end Alembic commands ###
