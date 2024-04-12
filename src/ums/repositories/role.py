@@ -26,7 +26,7 @@ class RoleRepo(BaseRepository[tables.Role]):
         req = select(self.table).filter_by(**kwargs)
         if as_full:
             req = req.options(joinedload(self.table.permissions))
-
+        # well ok
         result = (await self._session.execute(req.order_by(text(order_by)).limit(limit).offset(offset))).unique()
         return result.scalars().all()
 
