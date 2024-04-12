@@ -11,7 +11,7 @@ from ums.views import RolesResponse, RoleResponse, PermissionResponse, Permissio
 router = APIRouter()
 
 
-@router.post("/new", response_model=RoleResponse, status_code=http_status.HTTP_200_OK)
+@router.post("", response_model=RoleResponse, status_code=http_status.HTTP_200_OK)
 async def role_create(
         data: schemas.CreateRole,
         services: ServiceFactory = Depends(get_services),
@@ -25,7 +25,7 @@ async def role_create(
     return RoleResponse(content=await services.role.create_role(data=data))
 
 
-@router.get("/list", response_model=RolesResponse, status_code=http_status.HTTP_200_OK)
+@router.get("", response_model=RolesResponse, status_code=http_status.HTTP_200_OK)
 async def role_list(services: ServiceFactory = Depends(get_services)):
     """
     Получить список ролей
@@ -66,7 +66,7 @@ async def role_delete(
     await services.role.delete_role(role_id=role_id)
 
 
-@router.post("/link/new", status_code=http_status.HTTP_204_NO_CONTENT)
+@router.post("/link", status_code=http_status.HTTP_204_NO_CONTENT)
 async def role_set_permission(
         role_id: uuid.UUID,
         permission_tag: str,
@@ -98,7 +98,7 @@ async def role_delete_role_permission(
     await services.role.delete_role_permission(role_id=role_id, permission_id=permission_id)
 
 
-@router.post("/permission/new", response_model=PermissionResponse, status_code=http_status.HTTP_200_OK)
+@router.post("/permissions", response_model=PermissionResponse, status_code=http_status.HTTP_200_OK)
 async def role_create_permission(
         data: schemas.CreatePermission,
         services: ServiceFactory = Depends(get_services),
@@ -113,7 +113,7 @@ async def role_create_permission(
     return PermissionResponse(content=await services.role.create_permission(data=data))
 
 
-@router.get("/permission/list", response_model=PermissionsResponse, status_code=http_status.HTTP_200_OK)
+@router.get("/permissions", response_model=PermissionsResponse, status_code=http_status.HTTP_200_OK)
 async def role_permission_list(services: ServiceFactory = Depends(get_services)):
     """
     Получить список доступов
@@ -125,7 +125,7 @@ async def role_permission_list(services: ServiceFactory = Depends(get_services))
     return PermissionsResponse(content=await services.role.get_permissiones())
 
 
-@router.get("/permission/guest", response_model=list[str], status_code=http_status.HTTP_200_OK)
+@router.get("/permissions/guest", response_model=list[str], status_code=http_status.HTTP_200_OK)
 async def role_guest_permission(services: ServiceFactory = Depends(get_services)):
     """
     Список доступов для локального гостя
@@ -135,7 +135,7 @@ async def role_guest_permission(services: ServiceFactory = Depends(get_services)
     return await services.role.guest_permission()
 
 
-@router.get("/permission/app", response_model=list[str], status_code=http_status.HTTP_200_OK)
+@router.get("/permissions/app", response_model=list[str], status_code=http_status.HTTP_200_OK)
 async def role_app_permission(services: ServiceFactory = Depends(get_services)):
     """
     Список доступов приложения
@@ -145,7 +145,7 @@ async def role_app_permission(services: ServiceFactory = Depends(get_services)):
     return await services.role.app_permission()
 
 
-@router.delete("/permission", status_code=http_status.HTTP_204_NO_CONTENT)
+@router.delete("/permissions", status_code=http_status.HTTP_204_NO_CONTENT)
 async def role_delete_permission(
         permission_id: uuid.UUID,
         services: ServiceFactory = Depends(get_services),

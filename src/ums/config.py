@@ -34,20 +34,9 @@ class PostgresConfig:
 
 
 @dataclass
-class S3Config:
-    BUCKET: str
-    ENDPOINT_URL: str
-    PUBLIC_ENDPOINT_URL: str
-    REGION: str
-    ACCESS_KEY_ID: str
-    ACCESS_KEY: str
-
-
-@dataclass
 class DbConfig:
     POSTGRESQL: PostgresConfig
     REDIS: RedisConfig
-    S3: S3Config
 
 
 @dataclass
@@ -91,18 +80,11 @@ class BaseConfig:
 
 
 @dataclass
-class ControlConfig:
-    HOST: str
-    PORT: int
-
-
-@dataclass
 class Config:
     DEBUG: bool
     JWT: JWTConfig
     BASE: BaseConfig
     DB: DbConfig
-    CONTROL: ControlConfig
     EMAIL: EmailConfig
 
 
@@ -134,8 +116,6 @@ def load_config() -> Config:
     root_name = get_str_env("CONSUL_ROOT")
     host = get_str_env("CONSUL_HOST")
     port = int(get_str_env("CONSUL_PORT"))
-    grpc_host = get_str_env("GRPC_HOST")
-    grpc_port = int(get_str_env("GRPC_PORT"))
     service_path_prefix = get_str_env('SERVICE_PATH_PREFIX', optional=True)
 
     raw_yaml_config = consul.Consul(host=host, port=port, scheme="http").kv.get(root_name)[1]['Value'].decode("utf-8")
@@ -158,7 +138,7 @@ def load_config() -> Config:
         ),
         JWT=JWTConfig(
             ACCESS_EXP_SEC=config['jwt']['access_expire_seconds'],
-            REFRESH_EXP_SEC=config['jwt']['refresh_expire_second'],
+            REFRESH_EXP_SEC=config['jwt']['refresh_expire_seconds'],
             PUBLIC_KEY=config['jwt']['public_key'],
             PRIVATE_KEY=config['jwt']['private_key']
         ),
@@ -176,14 +156,6 @@ def load_config() -> Config:
                 PASSWORD=config['database']['redis']['password'],
                 PORT=config['database']['redis']['port']
             ),
-            S3=S3Config(
-                ENDPOINT_URL=config['database']['s3']['endpoint_url'],
-                REGION=config['database']['s3']['region'],
-                ACCESS_KEY_ID=config['database']['s3']['access_key_id'],
-                ACCESS_KEY=config['database']['s3']['secret_access_key'],
-                BUCKET=config['database']['s3']['bucket'],
-                PUBLIC_ENDPOINT_URL=config['database']['s3']['public_endpoint_url']
-            ),
         ),
         EMAIL=EmailConfig(
             RabbitMQ=RabbitMQ(
@@ -191,13 +163,9 @@ def load_config() -> Config:
                 PORT=config['email']['rabbitmq']['port'],
                 USERNAME=config['email']['rabbitmq']['username'],
                 PASSWORD=config['email']['rabbitmq']['password'],
-                VIRTUALHOST=config['email']['rabbitmq']['virtual_host'],
+                VIRTUALHOST=config['email']['rabbitmq']['vhost'],
                 EXCHANGE=config['email']['rabbitmq']['exchange']
             ),
             SENDER_ID=config['email']['sender_id']
         ),
-        CONTROL=ControlConfig(
-            HOST=grpc_host,
-            PORT=grpc_port
-        )
     )

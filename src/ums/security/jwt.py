@@ -36,7 +36,6 @@ class JwtTokenProcessor:
     def create_token(
             self,
             user_id: UserID,
-            username: str,
             permissions: list[str],
             state: UserState,
             token_type: TokenType,
@@ -44,7 +43,6 @@ class JwtTokenProcessor:
         expiration = self.access_expires if token_type == "access" else self.refresh_expires
         to_encode = {
             "id": str(user_id),
-            "username": username,
             "permissions": permissions,
             "state": state.value,
             "exp": datetime.now(UTC) + expiration

@@ -16,7 +16,8 @@ class RoleRepo(BaseRepository[tables.Role]):
         return (await self._session.execute(req)).scalars().first()
 
     async def get_all(
-            self, limit: int = 100,
+            self,
+            limit: int = 100,
             offset: int = 0,
             order_by: str = "id",
             as_full: bool = False,

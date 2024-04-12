@@ -22,11 +22,6 @@ class AccessDenied(APIError):
         super().__init__(message=message, status_code=403)
 
 
-class DolbayobError(AccessDenied):
-    def __init__(self):
-        super().__init__("Долбаеб ееррос")
-
-
 class Unauthorized(APIError):
     def __init__(self, message: str = "Несанкционированный") -> None:
         super().__init__(message=message, status_code=401)

@@ -1,12 +1,12 @@
 import re
-from uuid import UUID
+from datetime import datetime
 from enum import Enum
 from typing import NewType
+from uuid import UUID
 
 from pydantic import BaseModel, field_validator, EmailStr
-from datetime import datetime
 
-from .role import RoleMedium, RoleSmall, Role
+from .role import Role
 
 
 class UserState(str, Enum):
@@ -16,18 +16,13 @@ class UserState(str, Enum):
     DELETED = "DELETED"
 
 
-class AvatarFileType(str, Enum):
-    PHOTO_JPEG = "image/jpeg"
-    PHOTO_PNG = "image/png"
-    PHOTO_GIF = "image/gif"
+# class AvatarFileType(str, Enum):
+#     PHOTO_JPEG = "image/jpeg"
+#     PHOTO_PNG = "image/png"
+#     PHOTO_GIF = "image/gif"
 
 
 UserID = NewType('UserID', UUID)
-
-
-def is_valid_username(username: str) -> bool:
-    pattern = r"^(?=.{4,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$"
-    return re.match(pattern, username) is not None
 
 
 def is_valid_password(password: str) -> bool:
@@ -46,15 +41,10 @@ def is_valid_last_name(last_name: str) -> bool:
 
 
 class User(BaseModel):
-    """
-    Модель пользователя
-
-    """
     id: UserID
-    username: str
     email: EmailStr
-    first_name: str | None
-    last_name: str | None
+    first_name: str
+    last_name: str
     role: Role
     state: UserState
 
@@ -65,52 +55,11 @@ class User(BaseModel):
         from_attributes = True
 
 
-class UserAvatar(BaseModel):
-    avatar_url: str | None
-
-
-class UserMedium(BaseModel):
-    """
-    Модель пользователя
-
-    """
-    id: UserID
-    username: str
-    email: EmailStr
-    first_name: str | None
-    last_name: str | None
-    role: RoleMedium
-    state: UserState
-
-    created_at: datetime
-
-
-class UserSmall(BaseModel):
-    id: UserID
-    username: str
-    first_name: str | None
-    last_name: str | None
-    role: RoleSmall
-    state: UserState
-
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
 class UserCreate(BaseModel):
-    username: str
     email: EmailStr
     password: str
-    first_name: str = None
-    last_name: str = None
-
-    @field_validator('username')
-    def username_must_be_valid(cls, value):
-        if not is_valid_username(value):
-            raise ValueError("Имя пользователя должно быть валидным")
-        return value
+    first_name: str
+    last_name: str
 
     @field_validator('password')
     def password_must_be_valid(cls, value):
@@ -120,26 +69,20 @@ class UserCreate(BaseModel):
 
     @field_validator('first_name')
     def first_name_must_be_valid(cls, value):
-        if value and not is_valid_first_name(value):
+        if not is_valid_first_name(value):
             raise ValueError("Имя должно быть валидным")
         return value
 
     @field_validator('last_name')
     def last_name_must_be_valid(cls, value):
-        if value and not is_valid_last_name(value):
+        if not is_valid_last_name(value):
             raise ValueError("Фамилия должна быть валидной")
         return value
 
 
 class UserAuth(BaseModel):
-    username: str
+    email: EmailStr
     password: str
-
-    @field_validator('username')
-    def username_must_be_valid(cls, value):
-        if not is_valid_username(value):
-            raise ValueError("Имя пользователя должно быть валидным")
-        return value
 
     @field_validator('password')
     def password_must_be_valid(cls, value):
@@ -149,15 +92,8 @@ class UserAuth(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    username: str = None
-    first_name: str = None
-    last_name: str = None
-
-    @field_validator('username')
-    def username_must_be_valid(cls, value):
-        if value and not is_valid_username(value):
-            raise ValueError("Имя пользователя должно быть валидным")
-        return value
+    first_name: str | None = None
+    last_name: str | None = None
 
     @field_validator('first_name')
     def first_name_must_be_valid(cls, value):

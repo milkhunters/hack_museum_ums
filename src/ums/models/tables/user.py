@@ -15,10 +15,9 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    username = Column(VARCHAR(32), unique=True, nullable=False)
     email = Column(VARCHAR(255), unique=True, nullable=False)
-    first_name = Column(VARCHAR(100), nullable=True)
-    last_name = Column(VARCHAR(100), nullable=True)
+    first_name = Column(VARCHAR(100), nullable=False)
+    last_name = Column(VARCHAR(100), nullable=False)
 
     role_id = Column(Integer, ForeignKey("roles.id"), nullable=False)
     role = relationship("Role", back_populates="users")

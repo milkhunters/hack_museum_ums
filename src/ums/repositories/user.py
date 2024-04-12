@@ -14,12 +14,6 @@ class UserRepo(BaseRepository[tables.User]):
             req = req.options(joinedload(self.table.role).subqueryload(tables.Role.permissions))
         return (await self._session.execute(req)).scalars().first()
 
-    async def get_by_username_insensitive(self, username: str, as_full: bool = False) -> tables.User | None:
-        req = select(self.table).where(func.lower(self.table.username) == username.lower())
-        if as_full:
-            req = req.options(joinedload(self.table.role).subqueryload(tables.Role.permissions))
-        return (await self._session.execute(req)).scalar_one_or_none()
-
     async def get_by_email_insensitive(self, email: str, as_full: bool = False) -> tables.User | None:
         req = select(self.table).where(func.lower(self.table.email) == email.lower())
         if as_full:
